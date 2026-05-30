@@ -19,5 +19,16 @@ const getActivity = () =>{
         })
     )
 };
+const deleteActivity = (req,res) =>{
+    Activity.findOneAndDelete({
+        activity_id: req.params.id
+    })
+    .then((data)=>{
+        res.send("Deleted Successfully")
+    })
+    .catch((error)=>{
+        res.send(error)
+    })
+}
 
-module.exports = { createActivity, getActivity };
+module.exports = { createActivity, getActivity, deleteActivity}; 
