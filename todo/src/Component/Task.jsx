@@ -1,38 +1,57 @@
 import { Card } from "./Card";
-import { useState } from "react";
+import {  useEffect, useState } from "react";
 import { Input } from "./Input";
-
-const initialTasks = [
-    {id:1, text: "This is the first task"},
-    {id:2, text: "This is the second task"},
-    {id:3, text: "This is the third task"},
-    {id:4, text: "This is the fourth task"}
-]; //array with multiple objects
+import axios  from "axios";
 
 export const Tasks = () => {
-    const [tasks, setTasks] = useState(initialTasks);
-    const addTaskHandler = (newTask) => {
-        setTasks((prev)=>{
-            return [
-                ...prev, 
-                {
-                    id:Math.random(), 
-                    text: newTask,
-                },
-            ];
-        })};
+    const [tasks, setTasks] = useState([]);
+    const fetchTasks = async () => {
+    try {
+        const response = await axios.get("http://localhost:8080");
+        setTasks(response.data);
+    }
+    catch (error){
+            console.log(error);
+    }
+};
 
-    const deleteTaskHandler = (completedId) => {
-        setTasks((prev)=>{
-            return prev.filter((task) => task.id !== completedId);
-        })
+useEffect(() => {
+    fetchTasks();
+},[]);
+
+    const addTaskHandler = async (newTask) => {
+        try{
+            const body={
+                activity_id: Math.random(),
+                todo_description: newTask,
+            };
+           await axios.post("http://localhost:8080/create", body)
+           fetchTasks();
+        }
+        catch{
+
+        }
     };
+    const deleteTaskHandler = async (completedId) => {
+    try {
+        await axios.delete(`http://localhost:8080/${completedId}`);
+
+        setTasks((prev) =>
+            prev.filter(
+                (task) => task.activity_id !== completedId
+            )
+        );
+    }
+    catch(error){
+        console.log(error);
+    }
+};
     return(
         <div className="tasks">   
         <h1>Tasks</h1>
         <Input onAddTask={addTaskHandler} />
         {tasks.map((task)=>{
-                return <Card key={task.id} text={task.text} id={task.id} onTaskComplete={deleteTaskHandler} />
+                return <Card key={task.activity_id} text={task.todo_description} id={task.activity_id} onTaskComplete={deleteTaskHandler} />
             })}
         </div>
     );

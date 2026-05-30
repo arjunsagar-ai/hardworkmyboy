@@ -6,11 +6,9 @@ const mongoose = require("mongoose");
 app.use(express.json());
 app.use(cors());
 
-const {createActivity} = require("./controllers/activityController");
-const {getActivity} = require("./controllers/activityController");
-const {deleteActivity} = require("./controllers/activityController");
+const {createActivity, getActivity ,deleteActivity} = require("./controllers/activityController");
 
-const mongo_url = "your mongodb connection string here";
+const mongo_url = "your_mongodb_connection_string_here";
 mongoose.connect(mongo_url).then(()=>
     console.log("Connected to MongoDB")).catch((err) => console.log("Unable to connect to MongoDB"));
 
